@@ -1,12 +1,12 @@
 # aws-python-post-stack-outputs
 
-This project deploys an AWS CloudFormation template with an AWS Lambda Function which retrieves the `Outputs` of the parent stack and nested stacks within the parent stack and POST them as a HTTP Request to any API Endpoint.
+This project deploys an AWS CloudFormation template with an AWS Lambda Function, retrieving the `Outputs` of the parent stack and nested stacks within the parent stack and POST them as an HTTP Request to a pre-configured API Endpoint.
 
 ## Usage
 
 #### Configuration
 
-The `.env` configuration file provides a way to pass the `ENDPOINT_TYPE` and `ENDPOINT_URL` parameters to the AWS Lambda Function as environment variables, using the `serverless-dotenv-plugin`.
+The `AWS::Lambda::Function` environment variables provide a way to pass the `ENDPOINT_TYPE` and `ENDPOINT_URL` parameters to the Python script.
 
 #### Deployment
 
@@ -14,13 +14,12 @@ The `.env` configuration file provides a way to pass the `ENDPOINT_TYPE` and `EN
 
 #### Invocation
 
-After successful deployment, the `AWS::CloudFormation::CustomResource` triggers the AWS Lambda Function and fetch the `Outputs` of the stack and the nested stacks within this stack and post it to an API Endpoint, as a HTTP POST request.
+After successful deployment, the `AWS::CloudFormation::CustomResource` triggers the `PostCFNOutputToAPIEndpointLambda` AWS Lambda Function to fetch the `Outputs` of the parent stack and the nested stacks within the parent stack and post it to an API Endpoint, as an HTTP POST request.
 
 ### Re-use
 
-- Copy the **Resources** section on the `main.yml` file into your own CloudFormation template
-- Update the `.env` file
-- Deploy your CloudFormation template and watch your HTTP API Request log for the `Outputs` in a **JSON** format
+- Copy the **Resources** section on the `main.yml` file into your CloudFormation template
+- Deploy your CloudFormation template and watch your HTTP API requests log for the stack outputs in a `JSON` format
 
 #### Sample HTTP Request Body:
 
