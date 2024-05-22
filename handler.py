@@ -197,14 +197,23 @@ def get_active_regions_from_last_90_day_billing() -> list:
         logger.debug('Billing by AWS Region Response - ' + str(billing_by_aws_region_response))
 
         active_aws_regions = []
-        excluded_billing_regions = ['global']
+        excluded_billing_regions = ['global', 'NoRegion']
 
-        for aws_region in billing_by_aws_region_response["ResultsByTime"][0]["Groups"]:
+        for aws_region_results in billing_by_aws_region_response["ResultsByTime"]:
 
-            if float(aws_region["Metrics"]["UnblendedCost"]["Amount"]).__ceil__() > 0:
+            logger.debug("aws_region_results - " + str(aws_region_results))
 
-                logger.debug('Region-wise spend in ' + aws_region["Keys"][0] + ' is $' + aws_region["Metrics"]["UnblendedCost"]["Amount"] + aws_region["Metrics"]["UnblendedCost"]["Unit"])
-                active_aws_regions.append(aws_region["Keys"][0])
+            for aws_region_group in aws_region_results["Groups"]:
+
+                logger.debug("aws_region_group - " + str(aws_region_group))
+
+                if float(aws_region_group["Metrics"]["UnblendedCost"]["Amount"]).__ceil__() > 0:
+
+                    logger.debug('Region-wise spend in ' + aws_region_group["Keys"][0] + ' is $' + aws_region_group["Metrics"]["UnblendedCost"]["Amount"] + aws_region_group["Metrics"]["UnblendedCost"]["Unit"])
+
+                    if aws_region_group["Keys"][0] not in active_aws_regions:
+
+                        active_aws_regions.append(aws_region_group["Keys"][0])
 
         for excluded_region in excluded_billing_regions:
 
@@ -216,7 +225,7 @@ def get_active_regions_from_last_90_day_billing() -> list:
         return active_aws_regions
     
     except Exception as e:
-        logger.error("Error - " + str(traceback.print_tb(e.__traceback__)))
+        logger.error("CUR grouped by AWS Region Results Error - " + str(traceback.print_tb(e.__traceback__)))
         return []
 
 # get_active_services_from_last_90_day_billing: This method retrieves the active AWS services from the last 90 days billing. Returns a `list` of active AWS services.
@@ -252,17 +261,24 @@ def get_active_services_from_last_90_day_billing() -> list:
 
         active_aws_services = []
 
-        for aws_service in billing_by_aws_service_response["ResultsByTime"][0]["Groups"]:
+        for aws_service_results in billing_by_aws_service_response["ResultsByTime"]:
 
-            if float(aws_service["Metrics"]["UnblendedCost"]["Amount"]).__ceil__() > 0:
+            for aws_service_group in aws_service_results["Groups"]:
 
-                print('service-wise spend in ' + aws_service["Keys"][0] + ' is $' + aws_service["Metrics"]["UnblendedCost"]["Amount"] + aws_service["Metrics"]["UnblendedCost"]["Unit"])
-                active_aws_services.append(aws_service["Keys"][0])
+                logger.debug("aws_service_group - " + str(aws_service_group))
+
+                if float(aws_service_group["Metrics"]["UnblendedCost"]["Amount"]).__ceil__() > 0:
+
+                    logger.debug('Region-wise spend in ' + aws_service_group["Keys"][0] + ' is $' + aws_service_group["Metrics"]["UnblendedCost"]["Amount"] + aws_service_group["Metrics"]["UnblendedCost"]["Unit"])
+
+                    if aws_service_group["Keys"][0] not in active_aws_services:
+
+                        active_aws_services.append(aws_service_group["Keys"][0])
 
         return active_aws_services
 
     except Exception as e:
-        logger.error("Error - " + str(traceback.print_tb(e.__traceback__)))
+        logger.error("CUR grouped by AWS Service Results Error - " + str(traceback.print_tb(e.__traceback__)))
         return []
 
 # lambda_handler: This script executes as a Custom Resource on the Onboarding CloudFormation stack, gathering required information related to the deployed stack and additional information required for the Well-Architected Framework Review (WAFR) and Foundational Technical Review (FTR). The script is executed if the stack was created, updated or removed.
