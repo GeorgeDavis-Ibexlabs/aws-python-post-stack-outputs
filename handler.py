@@ -201,11 +201,7 @@ def get_active_regions_from_last_90_day_billing() -> list:
 
         for aws_region_results in billing_by_aws_region_response["ResultsByTime"]:
 
-            logger.debug("aws_region_results - " + str(aws_region_results))
-
             for aws_region_group in aws_region_results["Groups"]:
-
-                logger.debug("aws_region_group - " + str(aws_region_group))
 
                 if float(aws_region_group["Metrics"]["UnblendedCost"]["Amount"]).__ceil__() > 0:
 
@@ -265,11 +261,9 @@ def get_active_services_from_last_90_day_billing() -> list:
 
             for aws_service_group in aws_service_results["Groups"]:
 
-                logger.debug("aws_service_group - " + str(aws_service_group))
-
                 if float(aws_service_group["Metrics"]["UnblendedCost"]["Amount"]).__ceil__() > 0:
 
-                    logger.debug('Region-wise spend in ' + aws_service_group["Keys"][0] + ' is $' + aws_service_group["Metrics"]["UnblendedCost"]["Amount"] + aws_service_group["Metrics"]["UnblendedCost"]["Unit"])
+                    logger.debug('Service-wise spend in ' + aws_service_group["Keys"][0] + ' is $' + aws_service_group["Metrics"]["UnblendedCost"]["Amount"] + aws_service_group["Metrics"]["UnblendedCost"]["Unit"])
 
                     if aws_service_group["Keys"][0] not in active_aws_services:
 
@@ -334,7 +328,7 @@ def lambda_handler(event, context):
 
             stack_outputs = {}
             stack_outputs.update({'Action': event['RequestType']})
-
+            stack_outputs.update(update_payload_with_aws_metadata(http_payload = stack_outputs))
             stack_outputs.update({'ActiveAWSRegions': str(get_active_regions_from_last_90_day_billing())})
             stack_outputs.update({'ActiveAWSServices': str(get_active_services_from_last_90_day_billing())})
 
@@ -345,10 +339,6 @@ def lambda_handler(event, context):
                     logger.debug("Initial Stack Output(s) Dictionary - " + str(stack_outputs))
                     
                     stack_outputs.update(get_stack_outputs(stack_physical_resource_id = nested_stack["PhysicalResourceId"]))
-
-                    logger.debug("CloudFormation Stack Output - " + str(stack_outputs))
-
-                    stack_outputs.update(update_payload_with_aws_metadata(http_payload = stack_outputs))
 
                     logger.debug("Final Stack Output(s) Dictionary - " + str(stack_outputs))
 
