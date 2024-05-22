@@ -193,7 +193,6 @@ Resources:
                   logger.error("Access Denied Exception - " + str(traceback.print_tb(AccessDeniedException.__traceback__)))
                   return False, None
 
-          # TODO: Provide reference to the AWS Organizations WAFR recommendation.
           # check_organizations_account: Checks to see if the AWS Account is part of AWS Organizations. This is a recommended best practice in the Well-Architected Framework Review assessment. Returns a tuple (bool, str), True if the AWS account is part of AWS Organizations and the `str` would be the email address associated with the AWS Org account.
           def check_organizations_account(account_id: str) -> tuple[bool, str]:
 
