@@ -15,3 +15,6 @@ var/
 *.egg-info/
 .installed.cfg
 *.egg
+
+# macOS Files
+**/.DS_Store
