@@ -28,7 +28,7 @@ jobs:
     runs-on: ubuntu-latest
     outputs:
       requires-deploy: ${{ steps.changed-files.outputs.any_changed }}
-      repo-name: ${{ steps.repo-name.outputs.stdout }}
+      repo-name: ${{ steps.repo-name.outputs.GIT_REPO_NAME }}
 
     # Steps represent a sequence of tasks that will be executed as part of the job
     steps:
@@ -57,7 +57,7 @@ jobs:
       - name: Get GitHub Repository Name
         id: repo-name
         run: |
-          echo $GITHUB_REPOSITORY | cut -d "/" -f 2
+          echo GIT_REPO_NAME=`echo $GITHUB_REPOSITORY | cut -d "/" -f 2` >> $GITHUB_OUTPUT
 
   deploy:
     # The type of runner that the job will run on
@@ -65,7 +65,7 @@ jobs:
     needs: [build]
     if: ${{ (needs.build.outputs.requires-deploy == 'true') && (contains('refs/heads/main, refs/heads/dev', github.ref)) }}
     env:
-      LAMBDA_ZIP_NAME: lambda-${{ needs.build.outputs.repo-name}}.zip
+      LAMBDA_ZIP_NAME: lambda-${{ needs.build.outputs.repo-name }}.zip
 
     # Steps represent a sequence of tasks that will be executed as part of the job
     steps:
