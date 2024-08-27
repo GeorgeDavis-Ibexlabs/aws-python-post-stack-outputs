@@ -1,4 +1,6 @@
 boto3==1.33.12
 botocore==1.33.12
 cfnresponse==1.1.5
+mergedeep==1.3.4
+python_json_config==1.2.3
 urllib3<2.1
