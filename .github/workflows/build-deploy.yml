@@ -47,17 +47,17 @@ jobs:
             **.md
 
       - name: List all changed files
-        id: repo-name
-        run: |
-          echo ${{ env.GITHUB_REPOSITORY }} | cut -d "/" -f 2
-
-      - name: Get GitHub Repository Name
         env:
           ALL_CHANGED_FILES: ${{ steps.changed-files.outputs.all_changed_files }}
         run: |
           for file in ${ALL_CHANGED_FILES}; do
             echo "$file was changed"
           done
+
+      - name: Get GitHub Repository Name
+        id: repo-name
+        run: |
+          echo ${{ env.GITHUB_REPOSITORY }} | cut -d "/" -f 2
 
   deploy:
     # The type of runner that the job will run on
