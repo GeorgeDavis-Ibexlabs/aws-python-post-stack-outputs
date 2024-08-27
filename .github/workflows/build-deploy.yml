@@ -57,7 +57,7 @@ jobs:
       - name: Get GitHub Repository Name
         id: repo-name
         run: |
-          echo ${{ env.GITHUB_REPOSITORY }} | cut -d "/" -f 2
+          echo $GITHUB_REPOSITORY | cut -d "/" -f 2
 
   deploy:
     # The type of runner that the job will run on
