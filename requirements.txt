@@ -1,0 +1,4 @@
+boto3==1.33.12
+botocore==1.33.12
+cfnresponse==1.1.5
+urllib3<2.1
