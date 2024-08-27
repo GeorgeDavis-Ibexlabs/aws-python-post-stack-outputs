@@ -9,7 +9,7 @@ on:
   pull_request:
     branches: ["main", "dev"]
 
-  # For a workflow to be reusable
+  # For a workflow to be reusable by other repositories
   workflow_call:
 
   # Allows you to run this workflow manually from the Actions tab
