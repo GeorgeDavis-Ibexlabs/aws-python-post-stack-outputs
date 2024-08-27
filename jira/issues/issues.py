@@ -1,6 +1,5 @@
 import logging
-from jira.client import JIRA 
-from atlassian_doc_builder import ADFDoc
+from jira.client import JIRA
 from jira.resources import Issue
 
 # Issues - Python class to manipulate JIRA issues using the JIRA Python SDK
@@ -41,14 +40,14 @@ class Issues:
             return False, ''
     
     # Create a new JIRA issue
-    def __create_issue(self, issue_summary: str, issue_desc: ADFDoc, issue_type: str) -> Issue:        
+    def __create_issue(self, issue_summary: str, issue_desc: str, issue_type: str) -> Issue:        
 
         # Create an issue
         new_issue = self.jira.create_issue(
             fields={
                 'project': self.project_id,
                 'summary': issue_summary,
-                'description': str(issue_desc.validate()) if isinstance(issue_desc, ADFDoc) else str(issue_desc),
+                'description': issue_desc,
                 'issuetype': {'name': issue_type}
             }
         )
@@ -64,7 +63,7 @@ class Issues:
         return issue
 
     # Update an JIRA issue
-    def __update_issue(self, issue_id: str, issue_summary: str, issue_desc: ADFDoc) -> Issue:
+    def __update_issue(self, issue_id: str, issue_summary: str, issue_desc: str) -> Issue:
 
         self.logger.debug("Updating Issue ID: " + issue_id)
 
@@ -72,7 +71,7 @@ class Issues:
         self.jira.issue(issue_id).update(
             fields={
                 'summary': issue_summary,
-                'description': str(issue_desc.validate()) if isinstance(issue_desc, ADFDoc) else str(issue_desc)
+                'description': issue_desc
             },
             notify=True
         )
@@ -81,7 +80,7 @@ class Issues:
         self.logger.debug("Issue Updated: " + str(updated_issue.fields.summary) + " - " + str(updated_issue.fields.description))
         return updated_issue
     
-    def upsert_jira_issue(self, issue_summary: str, issue_desc: ADFDoc, issue_type: str = "Task") -> Issue:
+    def upsert_jira_issue(self, issue_summary: str, issue_desc: str, issue_type: str = "Task") -> Issue:
 
         # Check if issue already exists. If it does, then don't create a new issue. If it doesn't, then create a new issue
         # Returns bool and issue_key if key exists. Returns bool and empty string if key doesn't exist.
@@ -92,9 +91,6 @@ class Issues:
             issue = self.__get_issue(issue_id = key_info[1])
 
             # Compare hashes of server version (issue.fields.description) and local version (issue_desc)
-            if isinstance(issue_desc, ADFDoc):
-                issue_desc = str(issue_desc.validate())
-
             if hash(issue.fields.description) != hash(issue_desc):
                 self.logger.debug("Issue Description has changed. Updating Issue.")
 
