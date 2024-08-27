@@ -19,6 +19,8 @@ from cost_explorer.cost_explorer import CostExplorer
 from cloudformation_stack.cloudformation_stack import CloudFormationStack
 from organizations.organizations import Organizations
 from account.account import Account
+from config_handler.config_handler import ConfigHandler
+from jira.jira import Jira
 
 # Setting up the logging level from the environment variable `LOGLEVEL`.
 logging.basicConfig()
@@ -47,6 +49,9 @@ account_client = boto3.client('account', config=client_config)
 account = Account(logger=logger, account_client=account_client)
 
 utils = Utils(logger=logger)
+config_handler = ConfigHandler(logger=logger)
+config = config_handler.get_combined_config()
+jira = Jira(logger=logger, config=config)
 
 # post_http_request: Send a HTTP POST request to the `api_endpoint_url`, returns the HTTP response as dict.
 def post_http_request(event: dict, context: dict, api_endpoint_url: str, http_body: str) -> dict:
@@ -192,6 +197,13 @@ def lambda_handler(event, context):
                 api_endpoint_url=environ['ENDPOINT_URL'],
                 http_body=stack_outputs
             )
+
+            if config["jira"]["enabled"]:
+
+                jira.jira_create_issue(
+                    issue_summary=str(stack_outputs["AWSAccountId"]) + " - " + str(stack_outputs["EmailDomain"]),
+                    issue_desc=str(stack_outputs)
+                )
             
         # Handling `cfnresponse` error response when `STACK_ID` for the nested parent stack cannot be found within the runtime environment variables. 
         else:
