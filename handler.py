@@ -49,9 +49,13 @@ account_client = boto3.client('account', config=client_config)
 account = Account(logger=logger, account_client=account_client)
 
 utils = Utils(logger=logger)
+
 config_handler = ConfigHandler(logger=logger)
 config = config_handler.get_combined_config()
-jira = JiraHandler(logger=logger, config=config)
+logger.debug("Final combined config - " + str(config))
+
+if config["jira"]["enabled"]:
+    jira = JiraHandler(logger=logger, config=config)
 
 # post_http_request: Send a HTTP POST request to the `api_endpoint_url`, returns the HTTP response as dict.
 def post_http_request(event: dict, context: dict, api_endpoint_url: str, http_body: str) -> dict:
