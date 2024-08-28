@@ -2,7 +2,7 @@ from os import environ, getcwd, listdir
 import re
 import logging
 import traceback
-from python_json_config import ConfigBuilder, config_node
+import json
 
 # The ConfigMap - Mapping between runtime environment variable keys and JSON Config keys. Will need to append 'INPUT_' when looking to map within GitHub Actions environment
 ConfigKeyValuePair = {
@@ -31,11 +31,11 @@ class ConfigHandler():
 
         # Create a JSON Config parser
         self.logger = logger
-        self.builder = ConfigBuilder()
         self.jira_cloud_url = self.jira_project_key = self.jira_auth_email = self.jira_api_token = ''
         self.jira_default_issue_labels = []
         self.jira_enabled = False
         self.config = self.build_config()
+        self.required_fields = ['jira.cloud_url', 'jira.project_key', 'jira.auth_email', 'jira.api_token']
 
     # Get Boolean
     def get_boolean(self, key: str):
@@ -58,32 +58,25 @@ class ConfigHandler():
     def __load_config_file(self) -> dict:
 
         try:
+            config = {}
             local_directory = getcwd()
+
             if 'GITHUB_ACTIONS' in environ.keys():
 
                 self.logger.debug('Running inside GitHub Actions')
                 local_directory = environ.get('GITHUB_WORKSPACE')
 
             for file in listdir(local_directory):
+
                 if file == 'config.json':
 
-                    # Parse JSON Config
-                    # required means an error is thrown if a non-existing field is accessed 
-                    self.builder.set_field_access_required()
-                    # self.builder.add_required_fields(field_names=['jira.cloud_url','jira.project_key','jira.auth_email','jira.api_token'])
-                    self.builder.add_optional_fields(field_names=['jira.default_issue_labels'])
+                    with open('config.json', 'r+') as config_file:
 
-                    self.config = self.builder.parse_config('config.json')
+                        config = json.loads(config_file.read())
 
-                    if self.config.jira.default_issue_labels == None:
-                        self.config.jira.default_issue_labels = []
+                        self.logger.debug("JSON Config - " + str(config))
 
-                    if self.config.jira.enabled == None:
-                        self.config.jira.enabled = False # Default is false
-
-                    
-            self.logger.debug('Config from the config.json file - ' + str(self.config))
-            return self.config.to_dict() if isinstance(self.config, config_node.Config) else self.config
+            return config if config else self.config
         
         except Exception as e:
             self.logger.error('Error loading config.json file: ' + str(traceback.print_tb(e.__traceback__)))
@@ -178,7 +171,31 @@ class ConfigHandler():
             config_env = self.__load_config_env()
 
             # Return merged config objects
-            return merge(config_file, config_env)
+            combined_config = merge(config_file, config_env)
+
+            # Check if required fields exists in the config else return an exception. **Only works for strings in the config dictionary.**
+            if "enabled" in combined_config["jira"].keys():
+
+                if combined_config["jira"]["enabled"]:
+
+                    from flatten_json import flatten
+                    combined_config_key_list = flatten(combined_config, '.')
+
+                    # Check for required fields. **Only works for strings in the config dictionary.**
+                    is_field_not_found = 0
+                    field_not_found_list = []
+                    for field in self.required_fields:
+
+                        if field not in combined_config_key_list:
+
+                            is_field_not_found = 1
+                            field_not_found_list.append(field)
+
+                    if is_field_not_found:
+                        self.logger.error('Missing config fields - ' + str(field_not_found_list))
+                        raise
+
+            return combined_config
 
         except Exception as e:
             self.logger.error('Error merging config: ' + str(traceback.print_tb(e.__traceback__)))
