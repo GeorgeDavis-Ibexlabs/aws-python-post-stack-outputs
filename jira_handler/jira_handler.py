@@ -1,7 +1,7 @@
 import logging
 from jira import JIRA
-from projects.projects import Projects
-from issues.issues import Issues
+from jira_handler.projects.projects import Projects
+from jira_handler.issues.issues import Issues
 
 class JiraHandler:
 
