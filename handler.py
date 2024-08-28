@@ -37,7 +37,7 @@ if 'BOTOCORE_LOGLEVEL' in environ.keys():
         boto3.set_stream_logger(level=logging._nameToLevel[environ['BOTOCORE_LOGLEVEL']]) # Log boto3 messages that match BOTOCORE_LOGLEVEL to stdout
 
 costexplorer_client = boto3.client('ce', config=client_config)
-cost_explorer = CostExplorer(logger=logger, cost_explorer_client=costexplorer_client)
+cost_explorer = CostExplorer(logger=logger, costexplorer_client=costexplorer_client)
 
 cloudformation_stack_client = boto3.client('cloudformation', config=client_config)
 cloudformation_stack = CloudFormationStack(logger=logger, cloudformation_client=cloudformation_stack_client)
@@ -132,7 +132,7 @@ def lambda_handler(event, context):
 
         if 'STACK_ID' in environ.keys():
 
-            describe_stack_resources_response = cloudformation_stack.describe_stack_resources(
+            describe_stack_resources_response = cloudformation_stack_client.describe_stack_resources(
                 StackName=environ['STACK_ID']
             )
 
@@ -143,7 +143,7 @@ def lambda_handler(event, context):
             nested_cloudformation_stack_count = 0
 
             # Loop to wait for all Nested CloudFormation Stacks to be created
-            describe_stack_resources_response = cloudformation_stack.describe_stack_resources(
+            describe_stack_resources_response = cloudformation_stack_client.describe_stack_resources(
                 StackName=environ['STACK_ID']
             )
             
@@ -207,7 +207,7 @@ def lambda_handler(event, context):
             
         # Handling `cfnresponse` error response when `STACK_ID` for the nested parent stack cannot be found within the runtime environment variables. 
         else:
-            logger.error(str(event['RequestType']) + '  Stack HTTP API Error - ' + str(traceback.print_tb(e.__traceback__)))
+            logger.error(str(event['RequestType']) + '  Stack HTTP API Error - Environment variable `STACK_ID` not present.')
             cfnresponse.send(event, context, cfnresponse.FAILED, {})
 
     # Delete Stack - The following section gets executed when the deployed stack is deleted from AWS CloudFormation.
