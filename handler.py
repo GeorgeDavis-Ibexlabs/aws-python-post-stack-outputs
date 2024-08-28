@@ -20,7 +20,7 @@ from cloudformation_stack.cloudformation_stack import CloudFormationStack
 from organizations.organizations import Organizations
 from account.account import Account
 from config_handler.config_handler import ConfigHandler
-from jira.jira import Jira
+from jira_handler.jira_handler import JiraHandler
 
 # Setting up the logging level from the environment variable `LOGLEVEL`.
 logging.basicConfig()
@@ -51,7 +51,7 @@ account = Account(logger=logger, account_client=account_client)
 utils = Utils(logger=logger)
 config_handler = ConfigHandler(logger=logger)
 config = config_handler.get_combined_config()
-jira = Jira(logger=logger, config=config)
+jira = JiraHandler(logger=logger, config=config)
 
 # post_http_request: Send a HTTP POST request to the `api_endpoint_url`, returns the HTTP response as dict.
 def post_http_request(event: dict, context: dict, api_endpoint_url: str, http_body: str) -> dict:

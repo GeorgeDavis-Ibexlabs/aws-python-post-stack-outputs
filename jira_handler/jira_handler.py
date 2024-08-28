@@ -3,12 +3,12 @@ from jira import JIRA
 from projects.projects import Projects
 from issues.issues import Issues
 
-class Jira:
+class JiraHandler:
 
-    # Jira Constructor
+    # JiraHandler Constructor
     # logger: Logger object
     #
-    # Returns: Jira object
+    # Returns: JiraHandler object
     # Raises: None
     def __init__(self, logger: logging.Logger, config: dict):
         
