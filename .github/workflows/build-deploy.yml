@@ -81,6 +81,13 @@ jobs:
         run: |
           zip -r ${{ env.LAMBDA_ZIP_NAME }} . -x .git\*/\* -x *.yml -x .DS_Store -x .gitignore
 
+      - name: Upload Lambda Package Zip
+        uses: actions/upload-artifact@v4.3.6
+        with:
+          name: ${{ env.LAMBDA_ZIP_NAME }}
+          path: ${{ env.LAMBDA_ZIP_NAME }}
+          retention-days: 30
+
       - name: Configure AWS Credentials Action for GitHub Actions
         uses: aws-actions/configure-aws-credentials@v4.0.2
         with:
