@@ -102,4 +102,48 @@ jobs:
       # Upload files to Amazon S3
       - name: Copy files to s3
         run: |
-          aws s3 sync . s3://${{ vars.BUCKET_BASE_URL }}/wafr-ftr-onboarding/${{ steps.extract_branch.outputs.branch }}/ --exclude '*' --include ${{ env.LAMBDA_ZIP_NAME }}
+          aws s3 sync . s3://${{ vars.BUCKET_BASE_URL }}/${{ vars.S3_KEY_PREFIX }}${{ steps.extract_branch.outputs.branch }}/ --exclude '*' --include ${{ env.LAMBDA_ZIP_NAME }}
+
+      # Copy to us-east-1
+      - name: Copy files across S3 buckets, primarily AWS Lambda zip files
+        uses: GeorgeDavis-Ibexlabs/aws-lambda-s3-copy-zips@v0.0.2
+        with:
+          SRC_REGION: ${{ vars.AWS_REGION }}
+          SRC_BUCKET: ${{ vars.BUCKET_BASE_URL }}
+          SRC_KEY_PREFIX: ${{ vars.S3_KEY_PREFIX }}${{ steps.extract_branch.outputs.branch }}/
+          SRC_KEY: ${{ env.LAMBDA_ZIP_NAME }}
+          DST_REGION: us-east-1
+          DST_BUCKET: us-east-1.${{ vars.BUCKET_BASE_URL }}
+
+      # Copy to us-east-2
+      - name: Copy files across S3 buckets, primarily AWS Lambda zip files
+        uses: GeorgeDavis-Ibexlabs/aws-lambda-s3-copy-zips@v0.0.2
+        with:
+          SRC_REGION: ${{ vars.AWS_REGION }}
+          SRC_BUCKET: ${{ vars.BUCKET_BASE_URL }}
+          SRC_KEY_PREFIX: ${{ vars.S3_KEY_PREFIX }}${{ steps.extract_branch.outputs.branch }}/
+          SRC_KEY: ${{ env.LAMBDA_ZIP_NAME }}
+          DST_REGION: us-east-2
+          DST_BUCKET: us-east-2.${{ vars.BUCKET_BASE_URL }}
+
+      # Copy to us-west-1
+      - name: Copy files across S3 buckets, primarily AWS Lambda zip files
+        uses: GeorgeDavis-Ibexlabs/aws-lambda-s3-copy-zips@v0.0.2
+        with:
+          SRC_REGION: ${{ vars.AWS_REGION }}
+          SRC_BUCKET: ${{ vars.BUCKET_BASE_URL }}
+          SRC_KEY_PREFIX: ${{ vars.S3_KEY_PREFIX }}${{ steps.extract_branch.outputs.branch }}/
+          SRC_KEY: ${{ env.LAMBDA_ZIP_NAME }}
+          DST_REGION: us-west-1
+          DST_BUCKET: us-west-1.${{ vars.BUCKET_BASE_URL }}
+
+      # Copy to ca-central-1
+      - name: Copy files across S3 buckets, primarily AWS Lambda zip files
+        uses: GeorgeDavis-Ibexlabs/aws-lambda-s3-copy-zips@v0.0.2
+        with:
+          SRC_REGION: ${{ vars.AWS_REGION }}
+          SRC_BUCKET: ${{ vars.BUCKET_BASE_URL }}
+          SRC_KEY_PREFIX: ${{ vars.S3_KEY_PREFIX }}${{ steps.extract_branch.outputs.branch }}/
+          SRC_KEY: ${{ env.LAMBDA_ZIP_NAME }}
+          DST_REGION: ca-central-1
+          DST_BUCKET: ca-central-1.${{ vars.BUCKET_BASE_URL }}
