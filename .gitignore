@@ -15,6 +15,10 @@ var/
 *.egg-info/
 .installed.cfg
 *.egg
+**/__pycache__
 
 # macOS Files
 **/.DS_Store
+
+# Custom exceptions
+config.json
