@@ -106,7 +106,7 @@ jobs:
 
       # Copy to us-east-1
       - name: Copy files across S3 buckets, primarily AWS Lambda zip files
-        uses: GeorgeDavis-Ibexlabs/aws-lambda-s3-copy-zips@v0.0.2
+        uses: GeorgeDavis-Ibexlabs/aws-lambda-s3-copy-zips@v0.0.5
         with:
           SRC_REGION: ${{ vars.AWS_REGION }}
           SRC_BUCKET: ${{ vars.BUCKET_BASE_URL }}
@@ -117,7 +117,7 @@ jobs:
 
       # Copy to us-east-2
       - name: Copy files across S3 buckets, primarily AWS Lambda zip files
-        uses: GeorgeDavis-Ibexlabs/aws-lambda-s3-copy-zips@v0.0.2
+        uses: GeorgeDavis-Ibexlabs/aws-lambda-s3-copy-zips@v0.0.5
         with:
           SRC_REGION: ${{ vars.AWS_REGION }}
           SRC_BUCKET: ${{ vars.BUCKET_BASE_URL }}
@@ -128,7 +128,7 @@ jobs:
 
       # Copy to us-west-1
       - name: Copy files across S3 buckets, primarily AWS Lambda zip files
-        uses: GeorgeDavis-Ibexlabs/aws-lambda-s3-copy-zips@v0.0.2
+        uses: GeorgeDavis-Ibexlabs/aws-lambda-s3-copy-zips@v0.0.5
         with:
           SRC_REGION: ${{ vars.AWS_REGION }}
           SRC_BUCKET: ${{ vars.BUCKET_BASE_URL }}
@@ -139,7 +139,7 @@ jobs:
 
       # Copy to ca-central-1
       - name: Copy files across S3 buckets, primarily AWS Lambda zip files
-        uses: GeorgeDavis-Ibexlabs/aws-lambda-s3-copy-zips@v0.0.2
+        uses: GeorgeDavis-Ibexlabs/aws-lambda-s3-copy-zips@v0.0.5
         with:
           SRC_REGION: ${{ vars.AWS_REGION }}
           SRC_BUCKET: ${{ vars.BUCKET_BASE_URL }}
