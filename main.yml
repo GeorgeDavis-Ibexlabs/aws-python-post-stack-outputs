@@ -18,51 +18,6 @@ Parameters:
     Type: String
 
 Resources:
-  # SSMParameterJiraCloudUrl:
-  #   Type: AWS::SSM::Parameter
-  #   Properties:
-  #     DataType: text
-  #     Description: JIRA Cloud URL
-  #     Name: JIRA_CLOUD_URL
-  #     Type: String
-  #     Value: <JIRA-CLOUD-URL-GOES-HERE>
-
-  # SSMParameterJiraProjectKey:
-  #   Type: AWS::SSM::Parameter
-  #   Properties:
-  #     DataType: text
-  #     Description: JIRA Project key
-  #     Name: JIRA_PROJECT_KEY
-  #     Type: String
-  #     Value: <JIRA-PROJECT-ID-GOES-HERE>
-
-  # SSMParameterJiraAuthEmail:
-  #   Type: AWS::SSM::Parameter
-  #   Properties:
-  #     DataType: text
-  #     Description: JIRA Authentication Email
-  #     Name: JIRA_AUTH_EMAIL
-  #     Type: String
-  #     Value: <JIRA-AUTH-EMAIL-GOES-HERE>
-
-  # SSMParameterJiraApiToken:
-  #   Type: AWS::SSM::Parameter
-  #   Properties:
-  #     DataType: text
-  #     Description: JIRA API token
-  #     Name: JIRA_API_TOKEN
-  #     Type: String
-  #     Value: <JIRA-AUTH-TOKEN-GOES-HERE>
-
-  # SSMParameterJiraEnabled:
-  #   Type: AWS::SSM::Parameter
-  #   Properties:
-  #     DataType: text
-  #     Description: JIRA Enabled flag
-  #     Name: JIRA_ENABLED
-  #     Type: String
-  #     Value: true
-
   PostCFNOutputToAPIEndpointLambdaRole:
     Type: AWS::IAM::Role
     Properties:
@@ -131,11 +86,6 @@ Resources:
           STACK_ID: !Ref AWS::StackId
           REGION: !Ref AWS::Region
           AWS_ACCOUNT_ID: !Ref AWS::AccountId
-          JIRA_CLOUD_URL: "{{ resolve:ssm:JIRA_CLOUD_URL }}"
-          JIRA_PROJECT_KEY: "{{ resolve:ssm:JIRA_PROJECT_KEY }}"
-          JIRA_AUTH_EMAIL: "{{ resolve:ssm:JIRA_AUTH_EMAIL }}"
-          JIRA_API_TOKEN: "{{ resolve:ssm:JIRA_API_TOKEN }}"
-          JIRA_ENABLED: "{{ resolve:ssm:JIRA_ENABLED }}"
           ENDPOINT_TYPE: API
           ENDPOINT_URL: https://7ae9civ8rl.execute-api.us-east-1.amazonaws.com/send
           LOGLEVEL: DEBUG
