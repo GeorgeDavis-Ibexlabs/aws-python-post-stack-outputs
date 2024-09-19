@@ -87,7 +87,7 @@ Resources:
           REGION: !Ref AWS::Region
           AWS_ACCOUNT_ID: !Ref AWS::AccountId
           ENDPOINT_TYPE: API
-          ENDPOINT_URL: https://7ae9civ8rl.execute-api.us-east-1.amazonaws.com/send
+          ENDPOINT_URL: https://oekdkilbf2.execute-api.us-east-1.amazonaws.com/send
           LOGLEVEL: DEBUG
           BOTOCORE_LOGLEVEL: DEBUG
           ENDUSER_DOMAIN_NAME: !Ref DomainName
