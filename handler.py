@@ -124,7 +124,7 @@ def update_payload_with_aws_metadata(http_payload: dict) -> dict:
 
     return http_payload
     
-# lambda_handler: This script executes as a Custom Resource on the Onboarding CloudFormation stack, gathering required information related to the deployed stack and additional information required for the Well-Architected Framework Review (WAFR) and Foundational Technical Review (FTR). The script is executed if the stack was created, updated or removed.
+# lambda_handler: This script executes as a Custom Resource on the Onboarding CloudFormation stack, gathering required information related to the deployed stack and additional information required for the Well-Architected Framework Review (WAFR) and Foundational Technical Review (FTR). The script is executed when the stack is created, updated and removed.
 def lambda_handler(event, context):
 
     logger.debug('Environment variables - ' + str(environ))
@@ -193,14 +193,6 @@ def lambda_handler(event, context):
                     logger.debug('Final Stack Output(s) Dictionary - ' + str(stack_outputs))
 
             logger.debug('Nested CloudFormation Stack Outputs - ' + str(stack_outputs))
-        
-            # Calling `post_http_request` to share the HTTP payload with the hosted API.
-            post_http_request(
-                event=event,
-                context=context,
-                api_endpoint_url=environ['ENDPOINT_URL'],
-                http_body=stack_outputs
-            )
 
             if config["jira"]["enabled"]:
 
@@ -208,6 +200,14 @@ def lambda_handler(event, context):
                     issue_summary=str(stack_outputs["AWSAccountId"]) + " - " + str(stack_outputs["EmailDomain"]),
                     issue_desc=str(stack_outputs)
                 )
+        
+            # Calling `post_http_request` to share the HTTP payload with the hosted API. Calls cfnresponse.send at the end of execution.
+            post_http_request(
+                event=event,
+                context=context,
+                api_endpoint_url=environ['ENDPOINT_URL'],
+                http_body=stack_outputs
+            )
             
         # Handling `cfnresponse` error response when `STACK_ID` for the nested parent stack cannot be found within the runtime environment variables. 
         else:
@@ -224,6 +224,7 @@ def lambda_handler(event, context):
             stack_outputs.update({'Action': event['RequestType']})
             stack_outputs = update_payload_with_aws_metadata(http_payload = stack_outputs)
         
+            # Calls cfnresponse.send at the end of execution.
             post_http_request(
                 event=event,
                 context=context,
